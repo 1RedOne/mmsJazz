@@ -19,9 +19,9 @@ Set-Location $Path
 $Server = [System.Net.HttpListener]::new()
 $Server.Prefixes.Add('http://localhost:8001/')
 $Server.Start()
-#start http://localhost:8001/
+start http://localhost:8001/
 #Make the server stop after 30 seconds
-$StopAt = (Get-Date).AddSeconds(45)
+$StopAt = (Get-Date).AddSeconds(180)
 
 Function Send-MMSJazzResponse($InputObject){
     $JSON = $InputObject | ConvertTo-Json
@@ -70,12 +70,7 @@ while (($Server.IsListening)-and ((Get-Date) -le $StopAt)) {
                 
                 $JSON = ConvertTo-Json $Processes
             }
-            "CSinfo" {      
-                $csInfo = Get-ComputerInfo |select @{Name=‘installDate’;Expression={$_.OsInstallDate.DateTime}},
-        @{Name=‘processor’;Expression={$_.CsProcessors[0].Name}},
-        @{Name=‘ram’;Expression={[math]::Ceiling(($_.OsTotalVisibleMemorySize/ 1mb))}},
-        @{Name=‘osName’;Expression={$_.OSName}},
-        @{Name=‘osBuild’;Expression={$_.OsVersion}} 
+            "CSinfo" {    
                 $Payload = $CSInfo
                 $JSON = ConvertTo-Json $Payload                
             }
